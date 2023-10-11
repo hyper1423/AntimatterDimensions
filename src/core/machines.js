@@ -12,19 +12,23 @@ export const MachineHandler = {
   },
 
   get realityMachineMultiplier() {
-    return ShopPurchase.RMPurchases.currentMult * Teresa.rmMultiplier * Effects.max(1, PerkShopUpgrade.rmMult) *
-      getAdjustedGlyphEffect("effarigrm") * Achievement(167).effectOrDefault(1);
+    return new Decimal(1)
+      .times(ShopPurchase.RMPurchases.currentMult)
+      .times(Teresa.rmMultiplier)
+      .times(Effects.max(1, PerkShopUpgrade.rmMult))
+      .times(getAdjustedGlyphEffect("effarigrm"))
+      .times(Achievement(167).effectOrDefault(1));
   },
 
   get uncappedRM() {
     let log10FinalEP = player.records.thisReality.maxEP.plus(gainedEternityPoints()).log10();
     if (!PlayerProgress.realityUnlocked()) {
-      if (log10FinalEP > 8000) log10FinalEP = 8000;
-      if (log10FinalEP > 6000) log10FinalEP -= (log10FinalEP - 6000) * 0.75;
+      if (log10FinalEP.gt(8000)) log10FinalEP = new Decimal(8000);
+      if (log10FinalEP.gt(6000)) log10FinalEP = log10FinalEP.minus((log10FinalEP.minus(6000)).times(0.75));
     }
-    let rmGain = DC.E3.pow(log10FinalEP / 4000 - 1);
+    let rmGain = DC.E3.pow(log10FinalEP.div(4000).minus(1));
     // Increase base RM gain if <10 RM
-    if (rmGain.gte(1) && rmGain.lt(10)) rmGain = new Decimal(27 / 4000 * log10FinalEP - 26);
+    if (rmGain.gte(1) && rmGain.lt(10)) rmGain = log10FinalEP.times(27 / 4000).minus(26);
     rmGain = rmGain.times(this.realityMachineMultiplier);
     return rmGain.floor();
   },
@@ -38,8 +42,8 @@ export const MachineHandler = {
   },
 
   get baseIMCap() {
-    return (Math.pow(Math.clampMin(this.uncappedRM.log10() - 1000, 0), 2)) *
-      (Math.pow(Math.clampMin(this.uncappedRM.log10() - 100000, 1), 0.2));
+    return (Decimal.pow(Decimal.clampMin(this.uncappedRM.log10().minus(1000), 0), 2)).times(
+      Decimal.pow(Decimal.clampMin(this.uncappedRM.log10().minus(100000), 1), 0.2));
   },
 
   get currentIMCap() {
@@ -54,7 +58,7 @@ export const MachineHandler = {
   // Use iMCap to store the base cap; applying multipliers separately avoids some design issues the 3xTP upgrade has
   updateIMCap() {
     if (this.uncappedRM.gte(this.baseRMCap)) {
-      if (this.baseIMCap > player.reality.iMCap) {
+      if (this.baseIMCap.gt(player.reality.iMCap)) {
         player.records.bestReality.iMCapSet = Glyphs.copyForRecords(Glyphs.active.filter(g => g !== null));
         player.reality.iMCap = this.baseIMCap;
       }

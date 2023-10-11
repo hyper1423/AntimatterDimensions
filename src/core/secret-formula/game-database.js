@@ -20,6 +20,7 @@ import { sidebarResources } from "./sidebar-resources";
 import { speedrunMilestones } from "./speedrun-milestones";
 import { tabNotifications } from "./tab-notifications";
 import { tabs } from "./tabs";
+import { mte } from "./mte";
 
 export const GameDatabase = {
   achievements,
@@ -43,7 +44,8 @@ export const GameDatabase = {
   shopPurchases,
   speedrunMilestones,
   tabNotifications,
-  tabs
+  tabs,
+  mte
 };
 
 window.GameDatabase = GameDatabase;

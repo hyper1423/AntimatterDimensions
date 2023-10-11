@@ -142,7 +142,7 @@ dev.setCompanionGlyphEP = function(eternityPoints) {
   const glyph = player.reality.glyphs.active
     .concat(player.reality.glyphs.inventory)
     .filter(g => g.type === "companion")[0];
-  glyph.strength = rarityToStrength(eternityPoints.log10() / 1e6);
+  glyph.strength = rarityToStrength(eternityPoints.log10().div(1e6));
 };
 
 dev.decriminalize = function() {
@@ -255,7 +255,7 @@ dev.printResourceTotals = function() {
 
   console.log(`Infinities: e${Math.round(player.infinities.log10())}`);
   console.log(`Eternities: e${Math.round(player.eternities.log10())}`);
-  console.log(`Replicanti: e${formatWithCommas(1e5 * Math.floor(Replicanti.amount.log10() / 1e5 + 0.5))}`);
+  console.log(`Replicanti: e${formatWithCommas(1e5 * Math.floor(Replicanti.amount.log10().div(1e5) + 0.5))}`);
 
   console.log(`TT: e${Math.round(player.timestudy.theorem.log10())}`);
   console.log(`DT: e${Math.round(player.dilation.dilatedTime.log10())}`);

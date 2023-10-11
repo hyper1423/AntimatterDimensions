@@ -110,7 +110,7 @@ export const Effarig = {
   },
   get bonusRG() {
     // Will return 0 if Effarig Infinity is uncompleted
-    return Math.floor(replicantiCap().pLog10() / LOG10_MAX_VALUE - 1);
+    return Math.floor(replicantiCap().pLog10().div(LOG10_MAX_VALUE).minus(1).toNumber());
   },
   quotes: Quotes.effarig,
   symbol: "Ϙ"

@@ -138,7 +138,7 @@ export default {
       const powList = this.entries.map(e => e.data.pow);
       const totalPosPow = powList.filter(p => p > 1).reduce((x, y) => x * y, 1);
       const totalNegPow = powList.filter(p => p < 1).reduce((x, y) => x * y, 1);
-      const log10Mult = (this.resource.fakeValue ?? this.resource.mult).log10() / totalPosPow;
+      const log10Mult = (this.resource.fakeValue ?? this.resource.mult).log10().div(totalPosPow);
       const isEmpty = log10Mult === 0;
       if (!isEmpty) {
         this.lastNotEmptyAt = Date.now();

@@ -27,7 +27,7 @@ export const progressStages = [
     suggestedResource: "Antimatter",
     // Galaxies are worth 1/3 each, boosts break ties within galaxies, and antimatter breaks ties within boosts
     subProgressValue: save => 0.33 * save.galaxies + 0.02 * save.dimensionBoosts +
-      new Decimal(save.antimatter).log10() / 16000,
+      new Decimal(save.antimatter).log10().div(16000),
   },
   {
     id: PROGRESS_STAGE.EARLY_INFINITY,
@@ -43,7 +43,7 @@ export const progressStages = [
     name: "Broken Infinity",
     hasReached: save => save.auto.bigCrunch.interval <= 100,
     suggestedResource: "Infinity Points",
-    subProgressValue: save => Math.sqrt(new Decimal(save.infinityPoints).log10() / 145),
+    subProgressValue: save => Math.sqrt(new Decimal(save.infinityPoints).log10().div(145)),
   },
   {
     id: PROGRESS_STAGE.REPLICANTI,
@@ -66,14 +66,14 @@ export const progressStages = [
     suggestedResource: "Eternity Challenge Completions and Eternity Points",
     // Half from ECs, half from EP (up to e1300)
     subProgressValue: save => 0.008 * Object.values(save.eternityChalls).reduce((sum, c) => sum + c, 0) +
-      new Decimal(save.eternityPoints).log10() / 2500,
+      new Decimal(save.eternityPoints).log10().div(2500),
   },
   {
     id: PROGRESS_STAGE.EARLY_DILATION,
     name: "Time Dilation",
     hasReached: save => new Decimal(save.dilation.dilatedTime).gt(0),
     suggestedResource: "Dilated Time",
-    subProgressValue: save => new Decimal(save.dilation.dilatedTime).log10() / 15,
+    subProgressValue: save => new Decimal(save.dilation.dilatedTime).log10().div(15),
   },
   {
     id: PROGRESS_STAGE.LATE_ETERNITY,
@@ -150,7 +150,7 @@ export const progressStages = [
     name: "Lai'tela (6th Celestial)",
     hasReached: save => save.celestials?.laitela?.quoteBits > 0,
     suggestedResource: "Dark Matter and Singularities",
-    subProgressValue: save => new Decimal(save.celestials.laitela.darkMatter).log10() / 308.25,
+    subProgressValue: save => new Decimal(save.celestials.laitela.darkMatter).log10().div(308.25),
   },
   {
     id: PROGRESS_STAGE.PELLE,

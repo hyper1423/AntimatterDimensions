@@ -248,7 +248,7 @@ Currency.antimatter = new class extends DecimalCurrency {
 Currency.matter = new class extends DecimalCurrency {
   get value() { return player.matter; }
   set value(value) {
-    player.matter = Decimal.min(value, Decimal.MAX_VALUE);
+    player.matter = Decimal.min(value, DC.DECIMAL_MAX_VALUE);
   }
 }();
 
@@ -476,4 +476,9 @@ Currency.galaxyGeneratorGalaxies = new class extends NumberCurrency {
     const spent = player.galaxies + GalaxyGenerator.galaxies - value;
     player.celestials.pelle.galaxyGenerator.spentGalaxies += spent;
   }
+}();
+
+Currency.mTE = new class extends DecimalCurrency {
+  get value() { return player.moongtang.mTE; }
+  set value(value) { player.moongtang.mTE = value; }
 }();

@@ -93,13 +93,13 @@ export function gainedInfinityPoints() {
     TimeStudy(111)
   );
   if (Pelle.isDisabled("IPMults")) {
-    return Decimal.pow10(player.records.thisInfinity.maxAM.log10() / div - 0.75)
+    return Decimal.pow10(player.records.thisInfinity.maxAM.log10().div(div) - 0.75)
       .timesEffectsOf(PelleRifts.vacuum)
       .times(Pelle.specialGlyphEffect.infinity)
       .floor();
   }
   let ip = player.break
-    ? Decimal.pow10(player.records.thisInfinity.maxAM.log10() / div - 0.75)
+    ? Decimal.pow10(player.records.thisInfinity.maxAM.log10().div(div).minus(0.75))
     : new Decimal(308 / div);
   if (Effarig.isRunning && Effarig.currentStage === EFFARIG_STAGES.ETERNITY) {
     ip = ip.min(DC.E200);
@@ -137,7 +137,7 @@ function totalEPMult() {
 
 export function gainedEternityPoints() {
   let ep = DC.D5.pow(player.records.thisEternity.maxIP.plus(
-    gainedInfinityPoints()).log10() / (308 - PelleRifts.recursion.effectValue.toNumber()) - 0.7).times(totalEPMult());
+    gainedInfinityPoints()).log10().div(308 - PelleRifts.recursion.effectValue.toNumber()).minus(0.7)).times(totalEPMult());
 
   if (Teresa.isRunning) {
     ep = ep.pow(0.55);
@@ -154,7 +154,7 @@ export function gainedEternityPoints() {
 }
 
 export function requiredIPForEP(epAmount) {
-  return Decimal.pow10(308 * (Decimal.log(Decimal.divide(epAmount, totalEPMult()), 5) + 0.7))
+  return Decimal.pow10((Decimal.log(Decimal.divide(epAmount, totalEPMult()), 5).pow(0.7)).times(308))
     .clampMin(Number.MAX_VALUE);
 }
 
@@ -565,7 +565,7 @@ export function gameLoop(passDiff, options = {}) {
   InfinityDimensions.tick(diff);
   AntimatterDimensions.tick(diff);
 
-  const gain = Math.clampMin(FreeTickspeed.fromShards(Currency.timeShards.value).newAmount - player.totalTickGained, 0);
+  const gain = Decimal.clampMin(FreeTickspeed.fromShards(Currency.timeShards.value).newAmount.minus(player.totalTickGained), 0).toNumber();
   player.totalTickGained += gain;
 
   updatePrestigeRates();
@@ -835,8 +835,8 @@ function updateTachyonGalaxies() {
   const tachyonGalaxyMult = Effects.max(1, DilationUpgrade.doubleGalaxies);
   const tachyonGalaxyThreshold = 1000;
   const thresholdMult = getTachyonGalaxyMult();
-  player.dilation.baseTachyonGalaxies = Math.max(player.dilation.baseTachyonGalaxies,
-    1 + Math.floor(Decimal.log(Currency.dilatedTime.value.dividedBy(1000), thresholdMult)));
+  player.dilation.baseTachyonGalaxies = Decimal.max(player.dilation.baseTachyonGalaxies,
+    Decimal.floor(Decimal.log(Currency.dilatedTime.value.dividedBy(1000), thresholdMult).toNumber()).plus(1)).toNumber();
   player.dilation.nextThreshold = DC.E3.times(new Decimal(thresholdMult)
     .pow(player.dilation.baseTachyonGalaxies));
   player.dilation.totalTachyonGalaxies =

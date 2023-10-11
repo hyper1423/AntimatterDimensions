@@ -400,19 +400,22 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
     // so that we don't, for example, buy all of a set of 10 dimensions
     // when we can only afford 1.
     const money = rawMoney.div(numberPerSet);
+    if (money.eq(0)) { return null; } // Hyper: I guess this is a bug in the original game.
+
     const logMoney = money.log10();
     const logMult = this._logBaseIncrease;
     const logBase = this._logBaseCost;
+
     // The 1 + is because the multiplier isn't applied to the first purchase
-    let newPurchases = Math.floor(1 + (logMoney - logBase) / logMult);
+    let newPurchases = Decimal.floor(logMoney.minus(logBase).div(logMult).plus(1)).toNumber();
     // We can use the linear method up to one purchase past the threshold, because the first purchase
     // past the threshold doesn't have cost scaling in it yet.
     if (newPurchases > this._purchasesBeforeScaling) {
-      const discrim = this._precalcDiscriminant + 8 * this._logCostScale * logMoney;
-      if (discrim < 0) {
+      const discrim = logMoney.times(8 * this._logCostScale).plus(this._precalcDiscriminant);
+      if (discrim.lt(0)) {
         return null;
       }
-      newPurchases = Math.floor(this._precalcCenter + Math.sqrt(discrim) / (2 * this._logCostScale));
+      newPurchases = discrim.sqrt().div(2 * this._logCostScale).plus(this._precalcCenter).floor().toNumber();
     }
     if (newPurchases <= currentPurchases) return null;
     // There's a narrow edge case where the linear method returns > this._purchasesBeforeScaling + 1
@@ -425,6 +428,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
       const pExcess = newPurchases - this._purchasesBeforeScaling;
       logPrice = (newPurchases - 1) * logMult + logBase + 0.5 * pExcess * (pExcess - 1) * this._logCostScale;
     }
+
     return { quantity: newPurchases - currentPurchases, logPrice: logPrice + Math.log10(numberPerSet) };
   }
 

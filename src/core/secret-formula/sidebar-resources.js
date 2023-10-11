@@ -131,4 +131,12 @@ export const sidebarResources = [
     formatValue: x => format(x, 2),
     formatClass: "o-sidebar-currency--pelle",
   },
+  {
+    id: 17,
+    optionName: "mTEs",
+    isAvailable: () => true,
+    value: () => Currency.mTE.value.floor(),
+    formatValue: x => format(x, 2),
+    formatClass: "o-sidebar-currency--mte",
+  },
 ];

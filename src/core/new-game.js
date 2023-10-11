@@ -1,4 +1,4 @@
-import * as ADNotations from "@antimatter-dimensions/notations";
+import * as ADNotations from "@hyper1423/notations-break-eternity";
 
 export const NG = {
   startNewGame() {

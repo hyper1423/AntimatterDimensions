@@ -1,4 +1,4 @@
-import * as ADNotations from "@antimatter-dimensions/notations";
+import * as ADNotations from "@hyper1423/notations-break-eternity";
 
 import { DEV } from "@/env";
 import { devMigrations } from "./dev-migrations";

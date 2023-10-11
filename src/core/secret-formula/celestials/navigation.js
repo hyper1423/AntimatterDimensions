@@ -397,7 +397,7 @@ export const celestialNavigation = {
       if (EffarigUnlock.infinity.isUnlocked) return 1;
       if (!Effarig.isRunning) return 0;
 
-      return Currency.antimatter.value.pLog10() / Decimal.NUMBER_MAX_VALUE.log10();
+      return Currency.antimatter.value.pLog10() / Decimal.dNumberMax.log10();
     },
     node: {
       clickAction: () => Tab.celestials.effarig.show(true),
@@ -438,7 +438,7 @@ export const celestialNavigation = {
       if (EffarigUnlock.eternity.isUnlocked) return 1;
       if (!Effarig.isRunning) return 0;
 
-      return Currency.infinityPoints.value.pLog10() / Decimal.NUMBER_MAX_VALUE.log10();
+      return Currency.infinityPoints.value.pLog10() / Decimal.dNumberMax.log10();
     },
     node: {
       clickAction: () => Tab.celestials.effarig.show(true),
@@ -1808,7 +1808,7 @@ export const celestialNavigation = {
     complete: () => {
       if (Pelle.isUnlocked) return 1;
       const imCost = Math.clampMax(emphasizeEnd(Math.log10(Currency.imaginaryMachines.value) / Math.log10(1.6e15)), 1);
-      let laitelaProgress = Laitela.isRunning ? Math.min(Currency.eternityPoints.value.log10() / 4000, 0.99) : 0;
+      let laitelaProgress = Laitela.isRunning ? Math.min(Currency.eternityPoints.value.log10().div(4000), 0.99) : 0;
       if (Laitela.difficultyTier !== 8 || Glyphs.activeWithoutCompanion.length > 1) laitelaProgress = 0;
       else if (ImaginaryUpgrade(25).isAvailableForPurchase) laitelaProgress = 1;
       return (imCost + laitelaProgress) / 2;

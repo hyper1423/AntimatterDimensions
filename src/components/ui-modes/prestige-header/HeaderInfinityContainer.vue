@@ -24,9 +24,9 @@ export default {
       this.tesseractText = this.tesseractProgress();
     },
     tesseractProgress() {
-      const progress = this.infinityPoints.add(1).log10() / this.tesseractCost.log10();
-      if (progress > 1) return `<b>(${formatPercents(1)})</b>`;
-      return `(${formatPercents(progress, 2, 2)})`;
+      const progress = this.infinityPoints.add(1).log10().div(this.tesseractCost.log10());
+      if (progress.gt(1)) return `<b>(${formatPercents(1)})</b>`;
+      return `(${formatPercents(progress.toNumber(), 2, 2)})`;
     },
   },
 };

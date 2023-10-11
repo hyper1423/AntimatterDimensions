@@ -496,5 +496,31 @@ export const tabs = [
         hidable: true
       }
     ]
+  },
+  {
+    key: "moongtang",
+    name: "Moongtang",
+    UIClass: "o-tab-btn--moongtang",
+    hideAt: 1.8,
+    id: 11,
+    hidable: true,
+    subtabs: [
+      {
+        key: "mtecontroller",
+        name: "mTE Controller",
+        symbol: "!",
+        component: "MTEControllerTab",
+        id: 0,
+        hidable: true
+      },
+      {
+        key: "mteworld",
+        name: "MTE World",
+        symbol: "<i class='fas fa-vr-cardboard'></i>",
+        component: "MTEWorldTab",
+        id: 1,
+        hidable: true
+      }
+    ]
   }
 ];

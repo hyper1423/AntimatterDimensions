@@ -104,6 +104,8 @@ html {
 
   --color-pelle--base: crimson;
   --color-pelle--secondary: #00bcd4;
+
+  --color-moongtang: #ff5284;
 }
 
 :root .t-metro,
@@ -9288,3 +9290,79 @@ input.o-automator-block-input {
   width: 100%;
   height: 100%;
 }
+
+/* #region MTE Mod */
+
+/* #region tab buttons */
+
+.o-tab-btn--moongtang {
+  color: var(--color-moongtang);
+  background-color: var(--color-prestige--accent);
+  border-color: var(--color-moongtang);
+}
+
+.o-tab-btn--moongtang:hover {
+  background: var(--color-moongtang);
+}
+
+/* #endregion tab buttons */
+
+/* #region mte upgrades */
+
+.o-mte-upgrade-btn {
+  width: 19rem;
+  height: 9rem;
+  font-family: Typewriter, serif;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #1f1f1f;
+  border: 0.1rem solid var(--color-moongtang);
+  border-radius: var(--var-border-radius, 0.4rem);
+  transition-duration: 0.2s;
+  cursor: pointer;
+}
+
+.o-mte-upgrade-btn:hover {
+  color: var(--color-text-inverted);
+}
+
+/* #region o-infinity-upgrade-btn--available */
+
+.o-mte-upgrade-btn--available {
+  color: var(--color-moongtang);
+  background-color: black;
+}
+
+.o-mte-upgrade-btn--available:hover {
+  color: var(--color-text);
+  background-color: var(--color-moongtang);
+}
+
+/* #endregion o-infinity-upgrade-btn--available */
+
+/* #region o-infinity-upgrade-btn--unavailable */
+
+.o-mte-upgrade-btn--unavailable {
+  color: #181818;
+  background-color: #5f5f5f;
+  cursor: default;
+}
+
+.o-mte-upgrade-btn--unavailable:hover {
+  background-color: #737373;
+}
+
+/* #endregion o-infinity-upgrade-btn--unavailable */
+
+/* #region o-infinity-upgrade-btn--bought */
+
+.o-mte-upgrade-btn--bought {
+  color: black;
+  background-color: var(--color-moongtang);
+  border-color: #ff6961;
+  cursor: default;
+}
+
+/* #endregion mte upgrades */
+
+/* #endregion MTE Mod */
