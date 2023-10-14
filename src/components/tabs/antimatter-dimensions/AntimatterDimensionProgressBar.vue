@@ -22,7 +22,7 @@ export default {
     update() {
       this.displayPercents = formatPercents(this.fill, 2);
       const setProgress = (current, goal, tooltip) => {
-        this.fill = Decimal.clampMax(current.pLog10().div(Decimal.log10(goal)), 1).toNumber();
+        this.fill = Decimal.clampMax(current.eq(0) ? 0 : current.pLog10().div(Decimal.log10(goal)), 1).toNumber();
         this.tooltip = tooltip;
       };
       const setLinearProgress = (current, goal, tooltip) => {

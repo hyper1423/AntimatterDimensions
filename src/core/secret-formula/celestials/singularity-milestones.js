@@ -168,7 +168,9 @@ export const singularityMilestones = {
     repeat: 0,
     limit: 1,
     description: "Infinities boost Dark Matter and Dark Energy production",
-    effect: () => Decimal.clampMin(Currency.infinitiesTotal.value.pLog10().div(1000), 1).toNumber(),
+    effect: () => Decimal.clampMin(
+      (Currency.infinitiesTotal.value.eq(0) ? DC.DM1 : Currency.infinitiesTotal.value.pLog10())
+      .div(1000), 1).toNumber(),
     effectFormat: x => formatX(x, 2, 2),
     upgradeDirection: LAITELA_UPGRADE_DIRECTION.BOOSTS_LAITELA,
   },

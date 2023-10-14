@@ -136,7 +136,7 @@ export function getDilationGainPerSecond() {
   dtRate = dtRate.times(getAdjustedGlyphEffect("dilationDT"));
   dtRate = dtRate.times(ShopPurchase.dilatedTimePurchases.currentMult);
   dtRate = dtRate.times(
-    Decimal.clampMin(Decimal.log10(Replicanti.amount).times(getAdjustedGlyphEffect("replicationdtgain"), 1)));
+    Decimal.clampMin(1, Decimal.log10(Replicanti.amount).times(getAdjustedGlyphEffect("replicationdtgain"))));
   if (Enslaved.isRunning && !dtRate.eq(0)) dtRate = Decimal.pow10(Decimal.pow(dtRate.plus(1).log10(), 0.85).minus(1));
   if (V.isRunning) dtRate = dtRate.pow(0.5);
   return dtRate;

@@ -207,6 +207,9 @@ class RaPetState extends GameMechanicState {
     // for very long simulated ticks
     const newMemories = seconds * (this.memoryChunks + newMemoryChunks / 2) * Ra.productionPerMemoryChunk *
       this.memoryUpgradeCurrentMult;
+    if (Decimal.isNaN(newMemoryChunks)) {
+      debugger;
+    }
     this.memoryChunks += newMemoryChunks;
     this.memories += newMemories;
   }

@@ -48,7 +48,8 @@ export const Laitela = {
     return Decimal.plus(1, 
       Decimal.pow(Decimal.pLog10(Currency.darkMatter.max).div(50), 0.4)
       .times(0.5)
-      .times(1 + SingularityMilestone.continuumMult.effectOrDefault(0))).toNumber();
+      .times(1 + SingularityMilestone.continuumMult.effectOrDefault(0)))
+      .times(player.mteMatterMult ? player.mteMatterMult : 1).toNumber();
   },
   get realityReward() {
     return Math.clampMin(Math.pow(100, this.difficultyTier) *
