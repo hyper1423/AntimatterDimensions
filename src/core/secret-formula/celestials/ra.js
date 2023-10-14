@@ -63,7 +63,7 @@ export const ra = {
     teresaXP: {
       id: 2,
       reward: "All Memory Chunks produce more Memories based on Reality Machines",
-      effect: () => 1 + Math.pow(Currency.realityMachines.value.pLog10() / 100, 0.5),
+      effect: () => Decimal.pow(Currency.realityMachines.value.pLog10().div(100), 0.5).plus(1).toNumber(),
       pet: "teresa",
       level: 5,
       displayIcon: `Ϟ`

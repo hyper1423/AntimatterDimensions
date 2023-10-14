@@ -20,7 +20,7 @@ export default {
         (Math.log(player.replicanti.chance + 1)), getReplicantiInterval(false)).dividedBy(Math.LN10);
 
       const replicantiAmount = Replicanti.amount;
-      const isAbove308 = Replicanti.isUncapped && replicantiAmount.log10() > LOG10_MAX_VALUE;
+      const isAbove308 = Replicanti.isUncapped && replicantiAmount.log10().gt(LOG10_MAX_VALUE);
 
       if (isAbove308) {
         const postScale = Math.log10(ReplicantiGrowth.scaleFactor) / ReplicantiGrowth.scaleLog10;
@@ -31,7 +31,7 @@ export default {
         // The calculations to estimate time to next milestone of OoM based on game state, assumes that uncapped
         // replicanti growth scales as time^1/postScale, which turns out to be a reasonable approximation.
         const milestoneStep = Pelle.isDoomed ? 100 : 1000;
-        const nextMilestone = Decimal.pow10(milestoneStep * Math.floor(replicantiAmount.log10().div(milestoneStep) + 1));
+        const nextMilestone = Decimal.pow10(Decimal.floor(replicantiAmount.log10().div(milestoneStep).plus(1)).times(milestoneStep));
         const coeff = Decimal.divide(updateRateMs / 1000, logGainFactorPerTick.times(postScale));
         const timeToThousand = coeff.times(nextMilestone.divide(replicantiAmount).pow(postScale).minus(1));
         // The calculation seems to choke and return zero if the time is too large, probably because of rounding issues
@@ -45,8 +45,7 @@ export default {
       }
 
       const totalTime = LOG10_MAX_VALUE / (ticksPerSecond * log10GainFactorPerTick.toNumber());
-      let remainingTime = (LOG10_MAX_VALUE - replicantiAmount.log10()) /
-        (ticksPerSecond * log10GainFactorPerTick.toNumber());
+      let remainingTime = Decimal.sub(LOG10_MAX_VALUE, replicantiAmount.log10()).div(ticksPerSecond * log10GainFactorPerTick.toNumber()).toNumber();
       if (remainingTime < 0) {
         // If the cap is raised via Effarig Infinity but the player doesn't have TS192, this will be a negative number
         remainingTime = 0;

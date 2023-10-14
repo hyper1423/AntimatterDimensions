@@ -216,20 +216,21 @@ export const FreeTickspeed = {
     const tickmult = (1 + (Effects.min(1.33, TimeStudy(171)) - 1) *
       Math.max(getAdjustedGlyphEffect("cursedtickspeed"), 1));
     const logTickmult = Math.log(tickmult);
-    const logShards = shards.ln();
-    const uncapped = Decimal.max(0, logShards.div(logTickmult));
-    if (uncapped.lte(FreeTickspeed.softcap)) {
+    // NaN-proof code (DC.DM1 = new Decimal(-1))
+    const logShards = shards.eq(0) ? DC.DM1 : shards.ln();
+    const uncapped = Math.max(0, logShards.div(logTickmult).toNumber());
+    if (uncapped <= FreeTickspeed.softcap) {
       this.multToNext = tickmult;
       return {
-        newAmount: Decimal.ceil(uncapped),
-        nextShards: Decimal.pow(tickmult, Decimal.ceil(uncapped))
+        newAmount: Math.ceil(uncapped),
+        nextShards: Decimal.pow(tickmult, Math.ceil(uncapped))
       };
     }
     // Log of (cost - cost up to softcap)
     const priceToCap = FreeTickspeed.softcap * logTickmult;
     // In the following we're implicitly applying the function (ln(x) - priceToCap) / logTickmult to all costs,
     // so, for example, if the cost is 1 that means it's actually exp(priceToCap) * tickmult.
-    const desiredCost = (logShards - priceToCap) / logTickmult;
+    const desiredCost = (logShards.minus(priceToCap)).div(logTickmult).toNumber();
     const costFormulaCoefficient = FreeTickspeed.GROWTH_RATE / FreeTickspeed.GROWTH_EXP / logTickmult;
     // In the following we're implicitly subtracting softcap from bought,
     // so, for example, if bought is 1 that means it's actually softcap + 1.

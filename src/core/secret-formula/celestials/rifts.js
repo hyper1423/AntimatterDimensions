@@ -10,7 +10,7 @@ export const pelleRifts = {
     baseEffect: x => `IP gain ${formatX(x, 2, 2)}`,
     additionalEffects: () => [PelleRifts.vacuum.milestones[2]],
     strike: () => PelleStrikes.infinity,
-    percentage: totalFill => Math.log10(totalFill.plus(1).log10() * 10 + 1) ** 2.5 / 100,
+    percentage: totalFill => Math.log10(totalFill.plus(1).log10().toNumber() * 10 + 1) ** 2.5 / 100,
     percentageToFill: percentage => Decimal.pow(10,
       Decimal.pow(10, (percentage * 100) ** (1 / 2.5)).div(10).minus(0.1)
     ).minus(1),
@@ -60,7 +60,7 @@ export const pelleRifts = {
     // 0 - 1
     percentageToFill: percentage => Decimal.pow(10, 20 * percentage * 100).minus(1),
     effect: totalFill => (PelleRifts.chaos.milestones[0].canBeApplied
-      ? Decimal.sqrt(2000 + 1) : Decimal.sqrt(totalFill.plus(1).log10() + 1)),
+      ? Decimal.sqrt(2000 + 1) : Decimal.sqrt(totalFill.plus(1).log10().plus(1))),
     currency: () => Currency.replicanti,
     galaxyGeneratorThreshold: 1e7,
     milestones: [

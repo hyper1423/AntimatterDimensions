@@ -45,8 +45,10 @@ export const Laitela = {
     }
   },
   get matterExtraPurchaseFactor() {
-    return (1 + 0.5 * Math.pow(Decimal.pLog10(Currency.darkMatter.max) / 50, 0.4) *
-      (1 + SingularityMilestone.continuumMult.effectOrDefault(0)));
+    return Decimal.plus(1, 
+      Decimal.pow(Decimal.pLog10(Currency.darkMatter.max).div(50), 0.4)
+      .times(0.5)
+      .times(1 + SingularityMilestone.continuumMult.effectOrDefault(0))).toNumber();
   },
   get realityReward() {
     return Math.clampMin(Math.pow(100, this.difficultyTier) *
@@ -54,7 +56,10 @@ export const Laitela = {
   },
   // Note that entropy goes from 0 to 1, with 1 being completion
   get entropyGainPerSecond() {
-    return Math.clamp(Math.pow(Currency.antimatter.value.add(1).log10().div(1e11), 2), 0, 100) / 200;
+    return Decimal.clamp(
+      Decimal.pow(Currency.antimatter.value.add(1).log10().div(1e11), 2), 0, 100)
+      .div(200)
+      .toNumber();
   },
   get darkMatterMultGain() {
     return Decimal.pow(Currency.darkMatter.value.dividedBy(this.annihilationDMRequirement)
@@ -102,11 +107,13 @@ export const Laitela = {
     // Buy everything costing less than 0.02 of initial matter.
     const darkMatter = Currency.darkMatter.value;
     for (const upgrade of upgradeInfo) {
-      const purchases = Math.clamp(Math.floor(darkMatter.times(0.02).div(upgrade[0]).log(upgrade[1])), 0, upgrade[2]);
+      const candidates = darkMatter.times(0.02).div(upgrade[0]);
+      const logCandidates = candidates.eq(0) ? DC.DM1 : candidates.log(upgrade[1])
+      const purchases = Decimal.clamp(Decimal.floor(logCandidates), 0, upgrade[2]).toNumber();
       buy(upgrade, purchases);
     }
     while (upgradeInfo.some(upgrade => upgrade[0].lte(darkMatter) && upgrade[2] > 0)) {
-      const cheapestUpgrade = upgradeInfo.filter(upgrade => upgrade[2] > 0).sort((a, b) => a[0].minus(b[0]).sign())[0];
+      const cheapestUpgrade = upgradeInfo.filter(upgrade => upgrade[2] > 0).sort((a, b) => a[0].minus(b[0]).sign)[0];
       buy(cheapestUpgrade, 1);
     }
   },

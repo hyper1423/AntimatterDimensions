@@ -21,8 +21,10 @@ export const eternityUpgrades = {
       const multPreCap = Math.pow(base, pow);
       const eterPostCap = Currency.eternities.value.sub(1e5);
       const mult1 = eterPostCap.divide(200).plus(1);
-      const mult2 = eterPostCap.times(2).plus(1).log(Math.E) / log4;
-      const multPostCap = mult1.times(mult2).clampMin(1);
+      const mult2 = eterPostCap.times(2).plus(1).ln().div(log4).toNumber();
+      // I'm lost for words. How the f does 1 * NaN = 0?
+      // const multPostCap = mult1.times(mult2).clampMin(1);
+      const multPostCap = mult1.times(mult2 ? mult2 : 0).clampMin(1);
       return multPostCap.times(multPreCap);
     },
     formatEffect: value => formatX(value, 2, 1)

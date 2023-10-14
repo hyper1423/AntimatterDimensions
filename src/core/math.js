@@ -275,13 +275,13 @@ window.LinearCostScaling = class LinearCostScaling {
    */
   constructor(resourcesAvailable, initialCost, costMultiplier, maxPurchases = Number.MAX_SAFE_INTEGER, free = false) {
     if (free) {
-      this._purchases = Math.clampMax(Math.floor(
-        resourcesAvailable.div(initialCost).log10() /
-        Math.log10(costMultiplier) + 1), maxPurchases);
+      this._purchases = Math.clampMax(Decimal.floor(
+        resourcesAvailable.div(initialCost).log10().div(
+        Math.log10(costMultiplier)).plus(1)).toNumber(), maxPurchases);
     } else {
-      this._purchases = Math.clampMax(Math.floor(
-        resourcesAvailable.mul(costMultiplier - 1).div(initialCost).add(1).log10() /
-        Math.log10(costMultiplier)), maxPurchases);
+      this._purchases = Math.clampMax(Decimal.floor(
+        resourcesAvailable.mul(costMultiplier - 1).div(initialCost).add(1).log10().div(
+        Math.log10(costMultiplier))).toNumber(), maxPurchases);
     }
     this._totalCostMultiplier = Decimal.pow(costMultiplier, this._purchases);
     if (free) {
@@ -345,10 +345,21 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
       this._purchasesBeforeScaling = param.purchasesBeforeScaling;
     // eslint-disable-next-line no-negated-condition
     } else if (param.scalingCostThreshold !== undefined) {
-      this._purchasesBeforeScaling = Math.ceil(
-        (ExponentialCostScaling.log10(param.scalingCostThreshold) - this._logBaseCost) / this._logBaseIncrease);
+      this._purchasesBeforeScaling = ExponentialCostScaling.ctorPurchaseFormula(
+        param.scalingCostThreshold, this._logBaseCost, this._logBaseIncrease);
     } else throw new Error("Must specify either scalingCostThreshold or purchasesBeforeScaling");
     this.updateCostScale();
+  }
+
+  static ctorPurchaseFormula(p_sCT, lBC, lBI) {
+    const logParam1 = ExponentialCostScaling.log10(p_sCT);
+    /*
+    if (logParam1 instanceof Decimal) {
+      return Decimal.ceil(logParam1.minus(lBC).div(lBI)).toNumber();
+    }
+    console.log(p_sCT, lBC, lBI);
+    */
+    return Math.ceil((logParam1 - lBC) / lBI);
   }
 
   get costScale() {
@@ -359,7 +370,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
    * @param {number} value
    */
   set costScale(value) {
-    this._logCostScale = ExponentialCostScaling.log10(value);
+    this._logCostScale = ExponentialCostScaling.log10(value).toNumber();
     this._costScale = value;
     this.updateCostScale();
   }
@@ -396,26 +407,25 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
    * @returns {QuantityAndPrice|null} maximum value of bought that money can buy up to
    */
   getMaxBought(currentPurchases, rawMoney, numberPerSet) {
+    // TODO: Has to be redone
+    
     // We need to divide money by the number of things we need to buy per set
     // so that we don't, for example, buy all of a set of 10 dimensions
     // when we can only afford 1.
     const money = rawMoney.div(numberPerSet);
-    if (money.eq(0)) { return null; } // Hyper: I guess this is a bug in the original game.
-
-    const logMoney = money.log10();
+    const logMoney = money.log10().toNumber();
     const logMult = this._logBaseIncrease;
     const logBase = this._logBaseCost;
-
     // The 1 + is because the multiplier isn't applied to the first purchase
-    let newPurchases = Decimal.floor(logMoney.minus(logBase).div(logMult).plus(1)).toNumber();
+    let newPurchases = Math.floor(1 + (logMoney - logBase) / logMult);
     // We can use the linear method up to one purchase past the threshold, because the first purchase
     // past the threshold doesn't have cost scaling in it yet.
     if (newPurchases > this._purchasesBeforeScaling) {
-      const discrim = logMoney.times(8 * this._logCostScale).plus(this._precalcDiscriminant);
-      if (discrim.lt(0)) {
+      const discrim = this._precalcDiscriminant + 8 * this._logCostScale * logMoney;
+      if (discrim < 0) {
         return null;
       }
-      newPurchases = discrim.sqrt().div(2 * this._logCostScale).plus(this._precalcCenter).floor().toNumber();
+      newPurchases = Math.floor(this._precalcCenter + Math.sqrt(discrim) / (2 * this._logCostScale));
     }
     if (newPurchases <= currentPurchases) return null;
     // There's a narrow edge case where the linear method returns > this._purchasesBeforeScaling + 1
@@ -428,7 +438,6 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
       const pExcess = newPurchases - this._purchasesBeforeScaling;
       logPrice = (newPurchases - 1) * logMult + logBase + 0.5 * pExcess * (pExcess - 1) * this._logCostScale;
     }
-
     return { quantity: newPurchases - currentPurchases, logPrice: logPrice + Math.log10(numberPerSet) };
   }
 
@@ -440,13 +449,15 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
    * @returns {number} maximum value of bought that money can buy up to
    */
   getContinuumValue(rawMoney, numberPerSet) {
+    // TODO: This has to be redone too
+
     // We need to divide money by the number of things we need to buy per set
     // so that we don't, for example, buy all of a set of 10 dimensions
     // when we can only afford 1. In the specific case of continuum this means,
     // for example, that 10 AM buys 2/3 of a set of 10 first dimensions rather than
     // buying the whole set of 10, which at least feels more correct.
     const money = rawMoney.div(numberPerSet);
-    const logMoney = money.log10();
+    const logMoney = money.log10().toNumber();
     const logMult = this._logBaseIncrease;
     const logBase = this._logBaseCost;
     // The 1 + is because the multiplier isn't applied to the first purchase
@@ -464,7 +475,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
   }
 
   static log10(value) {
-    if (value instanceof Decimal) return value.log10();
+    if (value instanceof Decimal) return value.log10().toNumber(); // Well... I guess this is best for now
     return Math.log10(value);
   }
 };

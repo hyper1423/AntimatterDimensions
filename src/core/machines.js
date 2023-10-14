@@ -43,7 +43,7 @@ export const MachineHandler = {
 
   get baseIMCap() {
     return (Decimal.pow(Decimal.clampMin(this.uncappedRM.log10().minus(1000), 0), 2)).times(
-      Decimal.pow(Decimal.clampMin(this.uncappedRM.log10().minus(100000), 1), 0.2));
+      Decimal.pow(Decimal.clampMin(this.uncappedRM.log10().minus(100000), 1), 0.2)).toNumber();
   },
 
   get currentIMCap() {
@@ -58,7 +58,7 @@ export const MachineHandler = {
   // Use iMCap to store the base cap; applying multipliers separately avoids some design issues the 3xTP upgrade has
   updateIMCap() {
     if (this.uncappedRM.gte(this.baseRMCap)) {
-      if (this.baseIMCap.gt(player.reality.iMCap)) {
+      if (this.baseIMCap > player.reality.iMCap) {
         player.records.bestReality.iMCapSet = Glyphs.copyForRecords(Glyphs.active.filter(g => g !== null));
         player.reality.iMCap = this.baseIMCap;
       }

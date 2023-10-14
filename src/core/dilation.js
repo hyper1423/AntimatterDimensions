@@ -136,8 +136,8 @@ export function getDilationGainPerSecond() {
   dtRate = dtRate.times(getAdjustedGlyphEffect("dilationDT"));
   dtRate = dtRate.times(ShopPurchase.dilatedTimePurchases.currentMult);
   dtRate = dtRate.times(
-    Math.clampMin(Decimal.log10(Replicanti.amount) * getAdjustedGlyphEffect("replicationdtgain"), 1));
-  if (Enslaved.isRunning && !dtRate.eq(0)) dtRate = Decimal.pow10(Math.pow(dtRate.plus(1).log10(), 0.85) - 1);
+    Decimal.clampMin(Decimal.log10(Replicanti.amount).times(getAdjustedGlyphEffect("replicationdtgain"), 1)));
+  if (Enslaved.isRunning && !dtRate.eq(0)) dtRate = Decimal.pow10(Decimal.pow(dtRate.plus(1).log10(), 0.85).minus(1));
   if (V.isRunning) dtRate = dtRate.pow(0.5);
   return dtRate;
 }
@@ -169,7 +169,7 @@ export function getBaseTP(antimatter, requireEternity) {
   const am = (isInCelestialReality() || Pelle.isDoomed)
     ? antimatter
     : Ra.unlocks.unlockDilationStartingTP.effectOrDefault(antimatter);
-  let baseTP = Decimal.pow(Decimal.log10(am) / 400, 1.5);
+  let baseTP = Decimal.pow(Decimal.log10(am).div(400), 1.5);
   if (Enslaved.isRunning) baseTP = baseTP.pow(Enslaved.tachyonNerf);
   return baseTP;
 }
@@ -214,7 +214,7 @@ export function getDilationTimeEstimate(goal) {
 }
 
 export function dilatedValueOf(value) {
-  const log10 = value.log10();
+  const log10 = value.log10().toNumber();
   const dilationPenalty = 0.75 * Effects.product(DilationUpgrade.dilationPenalty);
   return Decimal.pow10(Math.sign(log10) * Math.pow(Math.abs(log10), dilationPenalty));
 }

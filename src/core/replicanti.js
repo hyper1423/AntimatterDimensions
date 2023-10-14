@@ -41,7 +41,7 @@ export function replicantiGalaxy(auto) {
   if (galaxyGain < 1) return;
   player.replicanti.timer = 0;
   Replicanti.amount = Achievement(126).isUnlocked && !Pelle.isDoomed
-    ? Decimal.pow10(Replicanti.amount.log10() - LOG10_MAX_VALUE * galaxyGain)
+    ? Decimal.pow10(Replicanti.amount.log10().minus(LOG10_MAX_VALUE * galaxyGain))
     : DC.D1;
   addReplicantiGalaxies(galaxyGain);
 }
@@ -77,11 +77,12 @@ function fastReplicantiBelow308(log10GainFactor, isAutobuyerActive) {
     return remainingGain;
   }
 
-  const gainNeededPerRG = Decimal.dNumberMax.log10();
-  const replicantiExponent = log10GainFactor.toNumber() + Replicanti.amount.log10();
+  const gainNeededPerRG = Decimal.dNumberMax.log10().toNumber();
+  const replicantiExponent = log10GainFactor.plus(Replicanti.amount.log10()).toNumber();
   const toBuy = Math.floor(Math.min(replicantiExponent / gainNeededPerRG,
     Replicanti.galaxies.max - player.replicanti.galaxies));
-  const maxUsedGain = gainNeededPerRG * toBuy + replicantiCap().log10() - Replicanti.amount.log10();
+  const maxUsedGain = Decimal.plus(gainNeededPerRG * toBuy, 
+    replicantiCap().log10().minus(Replicanti.amount.log10())).toNumber();
   const remainingGain = log10GainFactor.minus(maxUsedGain).clampMin(0);
   Replicanti.amount = Decimal.pow10(replicantiExponent - gainNeededPerRG * toBuy)
     .clampMax(replicantiCap());
@@ -104,11 +105,14 @@ export function getReplicantiInterval(overCapOverride, intervalIn) {
   }
 
   if (overCap) {
-    let increases = (amount.log10() - replicantiCap().log10()) / ReplicantiGrowth.scaleLog10;
+    let increases = Decimal.minus(amount.log10(), replicantiCap().log10())
+      .div(ReplicantiGrowth.scaleLog10);
     if (PelleStrikes.eternity.hasStrike && amount.gte(DC.E2000)) {
       // The above code assumes in this case there's 10x scaling for every 1e308 increase;
       // in fact, before e2000 it's only 2x.
-      increases -= Math.log10(5) * (2000 - replicantiCap().log10()) / ReplicantiGrowth.scaleLog10;
+      increases -= Decimal.minus(2000, replicantiCap().log10())
+        .times(Math.log10(5))
+        .div(ReplicantiGrowth.scaleLog10);
     }
     interval = interval.times(Decimal.pow(ReplicantiGrowth.scaleFactor, increases));
   }
@@ -154,7 +158,11 @@ export function totalReplicantiSpeedMult(overCap) {
   totalMult = totalMult.times(getAdjustedGlyphEffect("replicationspeed"));
   if (GlyphAlteration.isAdded("replication")) {
     totalMult = totalMult.times(
-      Math.clampMin(Decimal.log10(Replicanti.amount) * getSecondaryGlyphEffect("replicationdtgain"), 1));
+      Decimal.clampMin(
+        Decimal.log10(Replicanti.amount)
+        .times(getSecondaryGlyphEffect("replicationdtgain")), 
+      1)
+    );
   }
   totalMult = totalMult.timesEffectsOf(AlchemyResource.replication, Ra.unlocks.continuousTTBoost.effects.replicanti);
 
@@ -219,8 +227,10 @@ export function replicantiLoop(diff) {
       const intervalRatio = getReplicantiInterval(true).div(interval);
       remainingGain = remainingGain.div(intervalRatio);
       Replicanti.amount =
-        Decimal.exp(remainingGain.div(LOG10_E).times(postScale).plus(1).ln() / postScale +
-        Replicanti.amount.clampMin(1).ln());
+        Decimal.exp(remainingGain.div(LOG10_E)
+          .times(postScale).plus(1).ln()
+          .div(postScale)
+          .plus(Replicanti.amount.clampMin(1).ln()));
     }
   } else if (tickCount.gt(1)) {
     // Multiple ticks but "slow" gain: This happens at low replicanti chance and amount with a fast interval, which
@@ -360,7 +370,7 @@ export const ReplicantiUpgrade = {
       // cost + cost * 1e15 + cost * 1e30 + ... + cost * 1e15^(N-1) == cost * (1e15^N - 1) / (1e15 - 1)
       // N = log(IP * (1e15 - 1) / cost + 1) / log(1e15)
       let N = Currency.infinityPoints.value.times(this.costIncrease - 1)
-        .dividedBy(this.cost).plus(1).log(this.costIncrease);
+        .dividedBy(this.cost).plus(1).log(this.costIncrease).toNumber();
       N = Math.round((Math.min(this.value + 0.01 * Math.floor(N), this.cap) - this.value) * 100);
       if (N <= 0) return;
       const totalCost = this.cost.times(Decimal.pow(this.costIncrease, N).minus(1).dividedBy(this.costIncrease - 1));
@@ -565,7 +575,7 @@ export const Replicanti = {
       if (Achievement(126).isUnlocked) {
         const maxGain = Replicanti.galaxies.max - player.replicanti.galaxies;
         const logReplicanti = Replicanti.amount.log10();
-        return Math.min(maxGain, Math.floor(logReplicanti / LOG10_MAX_VALUE));
+        return Decimal.min(maxGain, Decimal.floor(logReplicanti.div(LOG10_MAX_VALUE))).toNumber();
       }
       return 1;
     },

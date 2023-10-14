@@ -4,7 +4,10 @@ function dimInfinityMult() {
   return Currency.infinitiesTotal.value.times(0.2).plus(1);
 }
 function chargedDimInfinityMult() {
-  return 1 + Math.log10(Math.max(1, Currency.infinitiesTotal.value.pLog10())) * Math.sqrt(Ra.pets.teresa.level) / 150;
+  return Decimal.log10(
+    Decimal.max(1, Currency.infinitiesTotal.value.pLog10()))
+    .times(Math.sqrt(Ra.pets.teresa.level))
+    .div(150).plus(1).toNumber();
 }
 
 export const infinityUpgrades = {

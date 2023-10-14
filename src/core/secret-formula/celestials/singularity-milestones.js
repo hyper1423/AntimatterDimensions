@@ -1,3 +1,5 @@
+import { DC } from "../../constants";
+
 // Used for UI purposes to give different theming for different kinds of upgrades
 export const LAITELA_UPGRADE_DIRECTION = {
   SELF_BOOST: 0,
@@ -166,7 +168,7 @@ export const singularityMilestones = {
     repeat: 0,
     limit: 1,
     description: "Infinities boost Dark Matter and Dark Energy production",
-    effect: () => Math.clampMin(Currency.infinitiesTotal.value.pLog10() / 1000, 1),
+    effect: () => Decimal.clampMin(Currency.infinitiesTotal.value.pLog10().div(1000), 1).toNumber(),
     effectFormat: x => formatX(x, 2, 2),
     upgradeDirection: LAITELA_UPGRADE_DIRECTION.BOOSTS_LAITELA,
   },
@@ -203,7 +205,10 @@ export const singularityMilestones = {
     repeat: 0,
     limit: 1,
     description: "Time Theorems boost Dark Matter and Dark Energy gain",
-    effect: () => Math.sqrt(Math.clampMin((Currency.timeTheorems.value.log10() - 1000) / 50, 1)),
+    effect: () => Decimal.sqrt(Decimal.clampMin(
+      (Currency.timeTheorems.value.eq(0) ? DC.DM1 : 
+      Currency.timeTheorems.value.log10())
+      .minus(1000).div(50), 1)).toNumber(),
     effectFormat: x => formatX(x, 2, 2),
     upgradeDirection: LAITELA_UPGRADE_DIRECTION.BOOSTS_LAITELA,
   },
@@ -266,7 +271,7 @@ export const singularityMilestones = {
     repeat: 0,
     limit: 1,
     description: "Dilated Time boosts Dark Matter production",
-    effect: () => Math.pow(1.6, Decimal.log10(Currency.dilatedTime.value.plus(1)) / 1000),
+    effect: () => Decimal.pow(1.6, Currency.dilatedTime.value.plus(1).log10().div(1000)).toNumber(),
     effectFormat: x => formatX(x, 2, 2),
     upgradeDirection: LAITELA_UPGRADE_DIRECTION.BOOSTS_LAITELA,
   },
