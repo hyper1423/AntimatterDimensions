@@ -914,7 +914,7 @@ window.player = {
     }
   },
   moongtang: {
-    mTE: DC.E100,
+    mTE: 69,
     upgrades: new Set(),
   },
 };

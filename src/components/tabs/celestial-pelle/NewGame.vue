@@ -40,7 +40,7 @@ export default {
     :style="style"
   >
     <h2>
-      Reset the entire game, but keep Automator Scripts, Secret Themes, Secret Achievements, and Options.
+      To do MTE, Reset the entire game, but keep Automator Scripts, Secret Themes, Secret Achievements, and Options.
     </h2>
     <h3>You can use the button in the top-right to view the game as it is right now.</h3>
     <div class="c-new-game-button-container">
@@ -53,7 +53,7 @@ export default {
     </div>
     <br>
     <h3 v-if="hasMoreCosmetics">
-      For completing the game, you also unlock a new cosmetic set of your choice for Glyphs. These are freely
+      For completing the Pelle, you also unlock a new cosmetic set of your choice for Glyphs. These are freely
       modifiable once you reach Reality again, but are purely visual and offer no gameplay bonuses.
       <br>
       <button
@@ -67,11 +67,11 @@ export default {
       Selected Set: {{ selectedSetName }}
     </h3>
     <h3 v-else>
-      You have unlocked all Glyph cosmetic sets!
+      For completing the Pelle, you also unlock a new cosmetic set of your choice for Glyphs. You have unlocked all Glyph cosmetic sets.
     </h3>
     <br>
     <h3>
-      You can also import "speedrun" to start the game again with additional tracking for speedrunning purposes.
+      As you accept the reset, You can get MTE Point and unlock new layer if you're doing it first time. Good Luck
     </h3>
   </div>
 </template>
