@@ -31,8 +31,8 @@ export const replicanti = {
     multValue: () => {
       const baseEffect = (Pelle.isDoomed ? DC.D1 : getAdjustedGlyphEffect("replicationspeed"))
         .times(Pelle.specialGlyphEffect.replication);
-      const alteredEffect = Math.clampMin(
-        Decimal.log10(Replicanti.amount) * getSecondaryGlyphEffect("replicationdtgain"), 1);
+      const alteredEffect = Decimal.clampMin(
+        Replicanti.amount.eq(0) ? DC.D0 : Decimal.log10(Replicanti.amount).times(getSecondaryGlyphEffect("replicationdtgain")), 1);
       return GlyphAlteration.isAdded("replication") ? baseEffect.times(alteredEffect) : baseEffect;
     },
     isActive: () => PlayerProgress.realityUnlocked() && (!Pelle.isDoomed || Pelle.specialGlyphEffect.replication > 1),

@@ -27,7 +27,7 @@ export default {
       darkMatterGain: new Decimal(0),
       isDMCapped: false,
       maxDarkMatter: new Decimal(0),
-      darkEnergy: 0,
+      darkEnergy: new Decimal(0),
       matterExtraPurchasePercentage: 0,
       autobuyersUnlocked: false,
       singularityPanelVisible: false,
@@ -50,7 +50,7 @@ export default {
       this.darkMatter.copyFrom(Currency.darkMatter);
       this.isDMCapped = this.darkMatter.eq(Number.MAX_VALUE);
       this.maxDarkMatter.copyFrom(Currency.darkMatter.max);
-      this.darkEnergy = player.celestials.laitela.darkEnergy;
+      this.darkEnergy.copyFrom(player.celestials.laitela.darkEnergy);
       this.matterExtraPurchasePercentage = Laitela.matterExtraPurchaseFactor - 1;
       this.autobuyersUnlocked = SingularityMilestone.darkDimensionAutobuyers.canBeApplied ||
         SingularityMilestone.darkDimensionAutobuyers.canBeApplied ||
@@ -59,8 +59,8 @@ export default {
       this.singularityPanelVisible = Currency.singularities.gt(0);
       this.singularitiesUnlocked = Singularity.capIsReached || this.singularityPanelVisible;
       this.singularityCap = Singularity.cap;
-      this.singularityWaitTime = TimeSpan.fromSeconds((this.singularityCap - this.darkEnergy) /
-        Currency.darkEnergy.productionPerSecond).toStringShort();
+      this.singularityWaitTime = TimeSpan.fromSeconds((Decimal.minus(this.singularityCap, this.darkEnergy)).div(
+        Currency.darkEnergy.productionPerSecond).toNumber()).toStringShort();
       this.showAnnihilation = Laitela.annihilationUnlocked;
 
       const d1 = DarkMatterDimension(1);

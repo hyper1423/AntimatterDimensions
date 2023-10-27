@@ -320,8 +320,8 @@ window.player = {
       bestEternitiesPerMs: DC.D0,
       maxReplicanti: DC.D0,
       maxDT: DC.D0,
-      bestRSmin: 0,
-      bestRSminVal: 0,
+      bestRSmin: DC.D0,
+      bestRSminVal: DC.D0,
     },
     bestReality: {
       time: Number.MAX_VALUE,
@@ -563,7 +563,7 @@ window.player = {
       lastRepeatedMachines: DC.D0
     },
     effarig: {
-      relicShards: 0,
+      relicShards: DC.D0,
       unlockBits: 0,
       run: false,
       quoteBits: 0,
@@ -680,7 +680,7 @@ window.player = {
       difficultyTier: 0,
       upgrades: {},
       darkMatterMult: 1,
-      darkEnergy: 0,
+      darkEnergy: DC.D0,
       singularitySorting: {
         displayResource: 0,
         sortResource: 0,
@@ -914,7 +914,7 @@ window.player = {
     }
   },
   moongtang: {
-    mTE: 69,
+    mTE: new Decimal(69),
     upgrades: new Set(),
   },
 };

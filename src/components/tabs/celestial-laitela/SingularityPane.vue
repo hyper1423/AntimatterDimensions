@@ -1,10 +1,12 @@
 <script>
+import { Singularity } from '../../../core/globals';
+
 export default {
   name: "SingularityPane",
   data() {
     return {
-      darkEnergy: 0,
-      darkEnergyGainPerSecond: 0,
+      darkEnergy: new Decimal(0),
+      darkEnergyGainPerSecond: new Decimal(0),
       singularities: 0,
       singularityCapIncreases: 0,
       canPerformSingularity: false,
@@ -20,6 +22,7 @@ export default {
       hasAutoSingularity: false,
       nextLowerStep: 0,
       willCondenseOnDecrease: false,
+      capIncreaseLimit: 0,
     };
   },
   computed: {
@@ -67,7 +70,7 @@ export default {
         : null;
     },
     increaseTooltip() {
-      return this.singularityCapIncreases >= 50
+      return this.singularityCapIncreases >= this.capIncreaseLimit
         ? "You cannot increase the cap any further!"
         : null;
     }
@@ -75,8 +78,8 @@ export default {
   methods: {
     update() {
       const laitela = player.celestials.laitela;
-      this.darkEnergy = Currency.darkEnergy.value;
-      this.darkEnergyGainPerSecond = Currency.darkEnergy.productionPerSecond;
+      this.darkEnergy.copyFrom(Currency.darkEnergy.value);
+      this.darkEnergyGainPerSecond.copyFrom(Currency.darkEnergy.productionPerSecond);
       this.singularities = Currency.singularities.value;
       this.singularityCapIncreases = laitela.singularityCapIncreases;
       this.canPerformSingularity = Singularity.capIsReached;
@@ -91,7 +94,8 @@ export default {
       this.isAutoEnabled = player.auto.singularity.isActive && SingularityMilestone.autoCondense.canBeApplied;
       this.hasAutoSingularity = Number.isFinite(this.autoSingularityFactor);
       this.nextLowerStep = this.singularityCap * this.autoSingularityFactor / 10;
-      this.willCondenseOnDecrease = this.isAutoEnabled && this.darkEnergy > this.nextLowerStep;
+      this.willCondenseOnDecrease = this.isAutoEnabled && this.darkEnergy.gt(this.nextLowerStep);
+      this.capIncreaseLimit = Singularity.capIncreaseLimit;
     },
     doSingularity() {
       Singularity.perform();
@@ -153,7 +157,7 @@ export default {
         </button>
         <button
           class="c-laitela-singularity__cap-control"
-          :class="{ 'c-laitela-singularity__cap-control--available' : singularityCapIncreases < 50 }"
+          :class="{ 'c-laitela-singularity__cap-control--available' : singularityCapIncreases < capIncreaseLimit }"
           :ach-tooltip="increaseTooltip"
           @click="increaseCap"
         >

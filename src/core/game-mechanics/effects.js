@@ -113,7 +113,7 @@ Decimal.prototype.timesEffectOf = function(effectSource) {
 /**
  * @returns {Decimal}
  */
-Decimal.prototype.timesEffectsOf = function(...effectSources) {
+Decimal.prototype.timesEffectsOf = /* function(...effectSources) {
   // Normalize is expensive; when we multiply many things together, it's faster
   // to get a big mantissa and then fix it at the end.
   let resultMantissa = this.mantissa;
@@ -124,6 +124,11 @@ Decimal.prototype.timesEffectsOf = function(...effectSources) {
     resultExponent += decimal.exponent;
   });
   return Decimal.fromMantissaExponent(resultMantissa, resultExponent);
+}; */ function(...effectSources) {
+  // Damn b_e multiplication is so much more complicated than b_i
+  let result = this;
+  applyEffectsOf(effectSources, v => result = result.times(v));
+  return result;
 };
 
 /**

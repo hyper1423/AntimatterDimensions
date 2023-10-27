@@ -143,7 +143,7 @@ export const ra = {
     relicShardGlyphLevelBoost: {
       id: 12,
       reward: "Glyph level is increased based on Relic Shards gained",
-      effect: () => 100 * Math.pow(Math.log10(Math.max(Effarig.shardsGained, 1)), 2),
+      effect: () => Decimal.times(100, Decimal.pow(Decimal.max(Effarig.shardsGained, 1).log10(), 2)).toNumber(),
       pet: "effarig",
       level: 15,
       displayIcon: `<span class="fas fa-fire"></span>`

@@ -506,10 +506,10 @@ export const tabs = [
     hidable: true,
     subtabs: [
       {
-        key: "mtecontroller",
-        name: "mTE Controller",
+        key: "mtemachine",
+        name: "MTE Machine",
         symbol: "!",
-        component: "MTEControllerTab",
+        component: "MTEMachineTab",
         id: 0,
         hidable: true
       },

@@ -43,13 +43,13 @@ export const galaxies = {
     name: "Tachyon Galaxies",
     displayOverride: () => {
       const num = player.dilation.totalTachyonGalaxies;
-      const mult = MultiplierTabHelper.globalGalaxyMult() *
-          (1 + Math.max(0, Replicanti.amount.log10().div(1e6)) * AlchemyResource.alternation.effectValue);
+      const mult = Decimal.times(MultiplierTabHelper.globalGalaxyMult(),
+          Decimal.plus(1, Decimal.max(0, Replicanti.amount.log10().div(1e6)).times(AlchemyResource.alternation.effectValue))).toNumber();
       return `${formatInt(num)}, ${formatX(mult, 2, 2)} strength`;
     },
     multValue: () => {
       const num = player.dilation.totalTachyonGalaxies;
-      const mult = 1 + Math.max(0, Replicanti.amount.log10().div(1e6)) * AlchemyResource.alternation.effectValue;
+      const mult = Decimal.plus(1, Decimal.max(0, Replicanti.amount.log10().div(1e6)).times(AlchemyResource.alternation.effectValue)).toNumber();
       return Decimal.pow10(num * mult);
     },
     isActive: () => player.dilation.totalTachyonGalaxies > 0,

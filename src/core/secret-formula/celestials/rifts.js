@@ -167,7 +167,7 @@ export const pelleRifts = {
         resource: "recursion",
         requirement: 0.15,
         description: "Infinity Dimensions are stronger based on EC completions",
-        effect: () => Decimal.pow("1e1500", ((EternityChallenges.completions - 25) / 20) ** 1.7).max(1),
+        effect: () => Decimal.pow("1e1500", EternityChallenges.completions < 25 ? 0 : ((EternityChallenges.completions - 25) / 20) ** 1.7).max(1),
         formatEffect: x => `Infinity Dimensions ${formatX(x)}`
       },
       {
@@ -188,7 +188,7 @@ export const pelleRifts = {
     strike: () => PelleStrikes.dilation,
     percentage: totalFill => totalFill.plus(1).log10().div(100).toNumber(),
     percentageToFill: percentage => Decimal.pow10(percentage * 100).minus(1),
-    effect: totalFill => new Decimal(1 + totalFill.plus(1).log10() * 0.004),
+    effect: totalFill => totalFill.plus(1).log10().times(0.004).plus(1),
     currency: () => Currency.dilatedTime,
     galaxyGeneratorThreshold: 1e5,
     milestones: [

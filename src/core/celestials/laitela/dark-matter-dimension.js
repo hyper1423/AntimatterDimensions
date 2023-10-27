@@ -27,7 +27,7 @@ export class DarkMatterDimensionState extends DimensionState {
   }
 
   // Does not include DM, only DE per second
-  get productionPerSecond() { return this.powerDE * 1000 / this.interval; }
+  get productionPerSecond() { return this.powerDE.times(1000 / this.interval); }
 
   get unlockUpgrade() {
     // The 15th Imaginary Upgrade unlocked Laitela and the 1st DMD
@@ -96,7 +96,8 @@ export class DarkMatterDimensionState extends DimensionState {
         SingularityMilestone.darkEnergyMult,
         SingularityMilestone.realityDEMultiplier,
         SingularityMilestone.multFromInfinitied
-      ).toNumber() * destabilizeBoost;
+      )
+      .times(destabilizeBoost);
   }
 
   get intervalAfterAscension() {
@@ -259,7 +260,7 @@ export const DarkMatterDimensions = {
         } else {
           DarkMatterDimension(tier - 1).amount = DarkMatterDimension(tier - 1).amount.plus(productionDM);
         }
-        Currency.darkEnergy.add(ticks * dim.powerDE);
+        Currency.darkEnergy.add(Decimal.times(ticks, dim.powerDE));
         dim.timeSinceLastUpdate -= dim.interval * ticks;
       }
     }

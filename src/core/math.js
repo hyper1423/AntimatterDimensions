@@ -43,6 +43,63 @@ Math.PI_2 = Math.PI * 2;
  * @param {number} alreadyBought amount already purchased
  * @returns {bulkBuyBinarySearch_result | null}
  */
+window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, n_alreadyBought) {
+  const costFunction = costInfo.costFunction;
+  const firstCost = costInfo.firstCost === undefined ? costFunction(n_alreadyBought) : costInfo.firstCost;
+  const isCumulative = costInfo.cumulative === undefined ? true : costInfo.cumulative;
+  if (money.lt(firstCost)) return null;
+  // Attempt to find the max we can purchase. We know we can buy 1, so we try 2, 4, 8, etc
+  // to figure out the upper limit
+  let alreadyBought = BigInt(n_alreadyBought);
+  let cantBuy = 1n;
+  let nextCost;
+  do {
+    cantBuy = cantBuy * 2n;
+    nextCost = costFunction(Number(alreadyBought + cantBuy - 1n));
+  } while (money.gte(nextCost));
+  // Deal with the simple case of buying just one
+  if (cantBuy === 2n) {
+    return { quantity: 1, purchasePrice: firstCost };
+  }
+  // The amount we can actually buy is in the interval [canBuy/2, canBuy), we do a binary search
+  // to find the exact value:
+  let canBuy = cantBuy / 2n;
+  //if (cantBuy > Number.MAX_SAFE_INTEGER) throw new Error("Overflow in binary search");
+  while (cantBuy - canBuy > 1n) {
+    const middle = (canBuy + cantBuy) / 2n;
+    if (money.gte(costFunction(Number(alreadyBought + middle - 1n)))) {
+      canBuy = middle;
+    } else {
+      cantBuy = middle;
+    }
+  }
+  const baseCost = costFunction(Number(alreadyBought + canBuy - 1n));
+  if (!isCumulative) {
+    return { quantity: Number(canBuy), purchasePrice: baseCost };
+  }
+  let otherCost = DC.D0;
+  // Account for costs leading up to that purchase; we are basically adding things
+  // up until they are insignificant
+  let count = 0n;
+  for (let i = canBuy - 1n; i > 0n; i--) {
+    const newCost = otherCost.plus(costFunction(Number(alreadyBought + i - 1n)));
+    if (newCost.eq(otherCost)) break;
+    otherCost = newCost;
+    if (++count > 1000n) throw new Error("unexpected long loop (buggy cost function?)");
+  }
+  let totalCost = baseCost.plus(otherCost);
+  // Check the purchase price again
+  if (money.lt(totalCost)) {
+    --canBuy;
+    // Since prices grow rather steeply, we can safely assume that we can, indeed, buy
+    // one less (e.g. if prices were A, B, C, D, we could afford D, but not A+B+C+D; we
+    // assume we can afford A+B+C because A+B+C < D)
+    totalCost = otherCost;
+  }
+  return { quantity: Number(canBuy), purchasePrice: totalCost };
+};
+
+/*
 window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alreadyBought) {
   const costFunction = costInfo.costFunction;
   const firstCost = costInfo.firstCost === undefined ? costFunction(alreadyBought) : costInfo.firstCost;
@@ -63,7 +120,7 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
   // The amount we can actually buy is in the interval [canBuy/2, canBuy), we do a binary search
   // to find the exact value:
   let canBuy = cantBuy / 2;
-  if (cantBuy > Number.MAX_SAFE_INTEGER) throw new Error("Overflow in binary search");
+  //if (cantBuy > Number.MAX_SAFE_INTEGER) throw new Error("Overflow in binary search");
   while (cantBuy - canBuy > 1) {
     const middle = Math.floor((canBuy + cantBuy) / 2);
     if (money.gte(costFunction(alreadyBought + middle - 1))) {
@@ -97,7 +154,7 @@ window.bulkBuyBinarySearch = function bulkBuyBinarySearch(money, costInfo, alrea
   }
   return { quantity: canBuy, purchasePrice: totalCost };
 };
-
+*/
 /**
  * LinearMultiplierScaling performs calculations for multipliers that scale up
  * linearly. The simplest case you might consider could be a factorial -- or something
@@ -408,6 +465,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
    */
   getMaxBought(currentPurchases, rawMoney, numberPerSet) {
     // TODO: Has to be redone
+    if (rawMoney.eq(0)) return 0;
     
     // We need to divide money by the number of things we need to buy per set
     // so that we don't, for example, buy all of a set of 10 dimensions
@@ -450,6 +508,7 @@ window.ExponentialCostScaling = class ExponentialCostScaling {
    */
   getContinuumValue(rawMoney, numberPerSet) {
     // TODO: This has to be redone too
+    if (rawMoney.eq(0)) return 0;
 
     // We need to divide money by the number of things we need to buy per set
     // so that we don't, for example, buy all of a set of 10 dimensions
@@ -1502,3 +1561,13 @@ window.ExponentialMovingAverage = class ExponentialMovingAverage {
     }
   }
 };
+
+window.log10OrNinf = function log10OrNinf(num) {
+  if (num instanceof Decimal) {
+    if (num.lt(0)) return new Decimal(NaN);
+    else if (num.eq(0)) return new Decimal(-Infinity);
+    else return num.log10();
+  }
+
+  return Math.log10(num);
+}

@@ -231,12 +231,12 @@ export const Singularity = {
 
   // Time (in seconds) to go from 0 DE to the condensing requirement
   get timePerCondense() {
-    return this.cap / Currency.darkEnergy.productionPerSecond;
+    return Decimal.div(this.cap, Currency.darkEnergy.productionPerSecond).toNumber();
   },
 
   // Time (in seconds) to reach the condensing requirement from *current* DE
   get timeUntilCap() {
-    return (this.cap - Currency.darkEnergy.value) / Currency.darkEnergy.productionPerSecond;
+    return Decimal.minus(this.cap, Currency.darkEnergy.value).div(Currency.darkEnergy.productionPerSecond).toNumber();
   },
 
   // Total additional time auto-condense will wait after reaching the condensing requirement
@@ -249,7 +249,7 @@ export const Singularity = {
   },
 
   increaseCap() {
-    if (player.celestials.laitela.singularityCapIncreases >= 50) return;
+    if (player.celestials.laitela.singularityCapIncreases >= this.capIncreaseLimit) return;
     player.celestials.laitela.singularityCapIncreases++;
   },
 
@@ -273,6 +273,10 @@ export const Singularity = {
     }
 
     EventHub.dispatch(GAME_EVENT.SINGULARITY_RESET_AFTER);
+  },
+
+  get capIncreaseLimit() {
+    return 1000;
   }
 };
 

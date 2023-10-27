@@ -15,7 +15,7 @@ export default {
       powerDMPerAscension: 0,
       interval: 0,
       powerDM: new Decimal(0),
-      powerDE: 0,
+      powerDE: new Decimal(0),
       intervalCost: 0,
       powerDMCost: 0,
       powerDECost: 0,
@@ -85,7 +85,7 @@ export default {
       return `${line1}<br>${line2}`;
     },
     darkEnergyText() {
-      const de = this.powerDE * (this.hoverOverAscension ? POWER_DE_PER_ASCENSION : 1);
+      const de = this.powerDE.times(this.hoverOverAscension ? POWER_DE_PER_ASCENSION : 1);
       const str = `DE +${format(de, 2, 4)}`;
       const line1 = this.hoverOverAscension ? `<b>${str}</b>` : str;
       const ascMult = POWER_DE_PER_ASCENSION * this.interval / this.intervalAfterAscension;
@@ -109,7 +109,7 @@ export default {
       this.powerDMPerAscension = dim.powerDMPerAscension;
       this.interval = dim.interval;
       this.powerDM.copyFrom(dim.powerDM);
-      this.powerDE = dim.powerDE;
+      this.powerDE.copyFrom(dim.powerDE);
       this.intervalCost = dim.intervalCost;
       this.powerDMCost = dim.powerDMCost;
       this.powerDECost = dim.powerDECost;
@@ -123,7 +123,7 @@ export default {
       this.intervalAscensionBump = SingularityMilestone.ascensionIntervalScaling.effectOrDefault(1200);
       this.intervalAfterAscension = dim.intervalAfterAscension;
       this.darkEnergyPerSecond = dim.productionPerSecond;
-      this.portionDE = this.darkEnergyPerSecond / Currency.darkEnergy.productionPerSecond;
+      this.portionDE = Decimal.div(this.darkEnergyPerSecond, Currency.darkEnergy.productionPerSecond);
       this.productionPerSecond = this.dimensionProduction(this.tier);
       this.percentPerSecond = Decimal.divide(this.productionPerSecond, this.amount).toNumber();
       if (!this.isIntervalCapped) this.hoverOverAscension = false;

@@ -190,7 +190,7 @@ export const dilationUpgrades = {
     cost: 1e55,
     pelleOnly: true,
     description: () => `Gain more Dilated Time based on current EP`,
-    effect: () => 1e9 ** Math.min((Math.max(player.eternityPoints.log10() - 1500, 0) / 2500) ** 1.2, 1),
+    effect: () => Decimal.pow(1e9, Decimal.min((Decimal.max(player.eternityPoints.log10().minus(1500), 0).div(2500)).pow(1.2), 1)),
     formatEffect: value => formatX(value, 2, 2)
   },
 };

@@ -114,7 +114,7 @@ export const progressStages = [
     name: "Effarig (2nd Celestial)",
     hasReached: save => save.celestials?.effarig?.quoteBits > 0,
     suggestedResource: "Reality Machines and Relic Shards",
-    subProgressValue: save => Math.log10(1 + save.celestials.effarig.relicShards) / 14,
+    subProgressValue: save => Decimal.plus(1 + save.celestials.effarig.relicShards).log10().div(14),
   },
   {
     id: PROGRESS_STAGE.ENSLAVED,

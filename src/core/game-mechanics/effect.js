@@ -143,6 +143,10 @@ export class Effect {
   }
 
   applyEffect(applyFn) {
+    if (!Decimal.isFinite(this.effectValue)) {
+      debugger;
+      throw new Error("Effect value is not finite");
+    }
     if (this.canBeApplied) applyFn(this.effectValue);
   }
 

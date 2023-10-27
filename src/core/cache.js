@@ -57,7 +57,7 @@ export const GameCache = {
     .map(run => run[1])
     .reduce(Number.sumReducer) / (1000 * player.records.recentEternities.length)),
 
-  tickSpeedMultDecrease: new Lazy(() => 10 - Effects.sum(
+  tickSpeedMultDecrease: new Lazy(() => player.mteTickMult ? player.mteTickMult : 10 - Effects.sum(
     BreakInfinityUpgrade.tickspeedCostMult,
     EternityChallenge(11).reward
   )),

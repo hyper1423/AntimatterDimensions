@@ -10,7 +10,7 @@ export const NG = {
     player.celestials.pelle.doomed = false;
 
     // mTE increases 1 if player beat pelle
-    Currency.mTE +=1;
+    Currency.mTE.value = Currency.mTE.value.add(1);
 
     // This is where we "confirm" a speedrun as completed and store all its information into the previous run prop
     // before resetting everything.

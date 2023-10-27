@@ -113,7 +113,7 @@ export default {
           let pendingTime = pending * secondsPerGalaxy.toNumber();
           // If popular music is unlocked add the divide amount
           if (Achievement(126).isUnlocked && !Pelle.isDoomed) {
-            const leftPercentAfterGalaxy = replicantiAmount.log10() / LOG10_MAX_VALUE - pending;
+            const leftPercentAfterGalaxy = replicantiAmount.log10().div(LOG10_MAX_VALUE).minus(pending).toNumber();
             pendingTime += leftPercentAfterGalaxy * secondsPerGalaxy.toNumber();
           }
           const thisGalaxyTime = pending > 0 ? pendingTime : secondsPerGalaxy.toNumber() - remainingTime;

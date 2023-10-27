@@ -68,8 +68,9 @@ Decimal.prototype.copyFrom = function(decimal) {
   if (!(decimal instanceof Decimal) && !(decimal instanceof DecimalCurrency)) {
     throw "Copy value is not Decimal or DecimalCurrency";
   }
-  this.mantissa = decimal.mantissa;
-  this.exponent = decimal.exponent;
+  this.sign = decimal.sign;
+  this.layer = decimal.layer;
+  this.mag = decimal.mag;
 };
 
 window.copyToClipboard = (function() {
@@ -288,4 +289,21 @@ Array.fromBitmask = function(mask) {
 
 String.isWhiteSpace = function(value) {
   return value && !value.trim();
+};
+
+Decimal.prototype.spLog10 = function() {
+  if (this.eq(0)) return new Decimal(0);
+  else return this.pLog10();
+}
+
+Decimal.spLog10 = function(value) {
+  return new Decimal(value).spLog10();
+}
+
+/**
+ * @returns {Decimal}
+ */
+Array.prototype.sumDecimal = function() {
+  if (this.length === 0) return new Decimal(0);
+  return this.reduce(Decimal.sumReducer);
 };

@@ -1,4 +1,6 @@
 <script>
+import { requestMTE } from '../../../core/mte';
+
 export default {
   name: "NewGame",
   data() {
@@ -25,7 +27,8 @@ export default {
       this.selectedSetName = GlyphAppearanceHandler.chosenFromModal?.name ?? "None (will choose randomly)";
     },
     startNewGame() {
-      NG.startNewGame();
+      // NG.startNewGame();
+      requestMTE();
     },
     openSelectionModal() {
       Modal.cosmeticSetChoice.show();
@@ -39,8 +42,9 @@ export default {
     class="c-new-game-container"
     :style="style"
   >
+    <h1> ...What have I done?</h1>
     <h2>
-      To do MTE, Reset the entire game, but keep Automator Scripts, Secret Themes, Secret Achievements, and Options.
+      By doing MTE, the entire game is reset, except Automator Scripts, Secret Themes, Secret Achievements, and Options.
     </h2>
     <h3>You can use the button in the top-right to view the game as it is right now.</h3>
     <div class="c-new-game-button-container">
@@ -53,7 +57,7 @@ export default {
     </div>
     <br>
     <h3 v-if="hasMoreCosmetics">
-      For completing the Pelle, you also unlock a new cosmetic set of your choice for Glyphs. These are freely
+      For doing MTE, you also unlock a new cosmetic set of your choice for Glyphs. These are freely
       modifiable once you reach Reality again, but are purely visual and offer no gameplay bonuses.
       <br>
       <button
@@ -67,11 +71,11 @@ export default {
       Selected Set: {{ selectedSetName }}
     </h3>
     <h3 v-else>
-      For completing the Pelle, you also unlock a new cosmetic set of your choice for Glyphs. You have unlocked all Glyph cosmetic sets.
+      For doing MTE, you also unlock a new cosmetic set of your choice for Glyphs. You have unlocked all Glyph cosmetic sets.
     </h3>
     <br>
     <h3>
-      As you accept the reset, You can get MTE Point and unlock new layer if you're doing it first time. Good Luck
+      For resetting the game, you get MTE point in exchange and unlock a new layer if you're doing it first time. Good Luck.
     </h3>
   </div>
 </template>

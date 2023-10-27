@@ -236,7 +236,7 @@ export const devMigrations = {
       movePropIfPossible("teresa", "effarig", "autoGlyphPick", {
         mode: AUTO_GLYPH_REJECT.SACRIFICE,
       });
-      movePropIfPossible("teresa", "effarig", "relicShards", 0, Math.max);
+      movePropIfPossible("teresa", "effarig", "relicShards", 0, Decimal.max);
       movePropIfPossible("effarig", "teresa", "quoteIdx", 0);
       movePropIfPossible("effarig", "teresa", "bestRunAM", 0, Decimal.max);
       movePropIfPossible("effarig", "teresa", "rmStore", 0, Math.max);

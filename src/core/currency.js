@@ -190,8 +190,11 @@ class NumberCurrency extends Currency {
  */
 class DecimalCurrency extends Currency {
   get operations() { return MathOperations.decimal; }
-  get mantissa() { return this.value.mantissa; }
-  get exponent() { return this.value.exponent; }
+  get mantissa() { return this.value.mantissa; /* throw new Error("Mantissa is no longer supported in break_eternity.js; you should use layer() and mag() instead"); */ }
+  get exponent() { return this.value.exponent; /* throw new Error("Exponent is no longer supported in break_eternity.js; you should use layer() and mag() instead"); */ }
+  get layer() { return this.value.layer }
+  get mag() { return this.value.mag }
+  get sign() { return this.value.sign }
   get startingValue() { return DC.D0; }
 }
 window.DecimalCurrency = DecimalCurrency;
@@ -412,7 +415,7 @@ Currency.perkPoints = new class extends NumberCurrency {
   set value(value) { player.reality.perkPoints = value; }
 }();
 
-Currency.relicShards = new class extends NumberCurrency {
+Currency.relicShards = new class extends DecimalCurrency {
   get value() { return player.celestials.effarig.relicShards; }
   set value(value) { player.celestials.effarig.relicShards = value; }
 }();
@@ -436,14 +439,14 @@ Currency.darkMatter = new class extends DecimalCurrency {
   set max(value) { player.celestials.laitela.maxDarkMatter = value; }
 }();
 
-Currency.darkEnergy = new class extends NumberCurrency {
+Currency.darkEnergy = new class extends DecimalCurrency {
   get value() { return player.celestials.laitela.darkEnergy; }
   set value(value) { player.celestials.laitela.darkEnergy = value; }
 
   get productionPerSecond() {
     return DarkMatterDimensions.all
       .map(d => d.productionPerSecond)
-      .sum();
+      .sumDecimal();
   }
 }();
 

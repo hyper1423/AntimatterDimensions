@@ -3,6 +3,8 @@ import { DC } from "./constants";
 class DimBoostRequirement {
   constructor(tier, amount) {
     this.tier = tier;
+    if (typeof amount === "bigint")
+      amount = Number(amount);
     this.amount = amount;
   }
 
@@ -246,18 +248,18 @@ function maxBuyDimBoosts() {
   // so a = req2 - req1, b = req1 - a = 2 req1 - req2, num = (dims - b) / a
   const increase = req2.amount - req1.amount;
   const dim = AntimatterDimension(req1.tier);
-  let maxBoosts = Math.min(Number.MAX_VALUE,
-    1 + Math.floor((dim.totalAmount.toNumber() - req1.amount) / increase));
-  if (DimBoost.bulkRequirement(maxBoosts).isSatisfied) {
-    softReset(maxBoosts);
+  let maxBoosts = BigInt(Math.min(Number.MAX_VALUE,
+    1 + Math.floor((dim.totalAmount.toNumber() - req1.amount) / increase)));
+  if (DimBoost.bulkRequirement(Number(maxBoosts)).isSatisfied) {
+    softReset(Number(maxBoosts));
     return;
   }
   // But in case of EC5 it's not, so do binary search for appropriate boost amount
-  let minBoosts = 2;
-  while (maxBoosts !== minBoosts + 1) {
-    const middle = Math.floor((maxBoosts + minBoosts) / 2);
-    if (DimBoost.bulkRequirement(middle).isSatisfied) minBoosts = middle;
+  let minBoosts = 2n;
+  while (maxBoosts !== minBoosts + 1n) {
+    const middle = (maxBoosts + minBoosts) / 2n;
+    if (DimBoost.bulkRequirement(Number(middle)).isSatisfied) minBoosts = middle;
     else maxBoosts = middle;
   }
-  softReset(minBoosts);
+  softReset(Number(minBoosts));
 }

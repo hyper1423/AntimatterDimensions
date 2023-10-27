@@ -41,7 +41,8 @@ import TimeDilationTab from "./time-dilation/TimeDilationTab";
 import TimeDimensionsTab from "./time-dimensions/TimeDimensionsTab";
 import TimeStudiesTab from "./time-studies/TimeStudiesTab";
 import VTab from "./celestial-v/VTab";
-import MTEWorldTab from "./moongtang/MTEWorldTab"
+import MTEWorldTab from "./moongtang/MTEWorldTab";
+import MTEMachineTab from "./moongtang-machine/MTEMachineTab";
 
 const TabComponents = {
   AntimatterDimensionsTab,
@@ -86,7 +87,8 @@ const TabComponents = {
   CelestialNavigationTab,
   ShopTab,
   MultiplierBreakdownTab,
-  MTEWorldTab
+  MTEWorldTab,
+  MTEMachineTab
 };
 
 export default TabComponents;
